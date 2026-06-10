@@ -1,0 +1,14 @@
+contourpy
+cycler
+fonttools
+kiwisolver
+matplotlib
+mplcursors
+numpy
+packaging
+pandas
+pillow
+pyparsing
+python-dateutil
+six
+ttkbootstrap

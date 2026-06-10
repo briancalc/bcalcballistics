@@ -1,0 +1,9 @@
+CLASS,CLASS_DESC,TAYLOR,THORNILEY,HAWKS,HITS
+cls 1 lite,"squirrel, fox",0-4.9999,0-29.9,0-5.99,0-249.9
+cls 1 hvy,coyote,5-9.99,30-44.9,6-12.49,250-499.9
+cls 2 lite,"whtl deer, pr antlpe, hog",10-29.99,45-89.9,12.5-14.9,500-649.99
+cls 2 hvy,"ml deer, elk, blck bear, mntn lion, bighorn sheep",30-39.99,90-109.9,15-31.9,650-899.9
+cls 3 lite,"large elk, moose",40-49.99,110-119.9,32-34.9,900-1199.9
+cls 3 hvy,large moose,50-64.99,120-149.9,35-68.4,1200-1499.9
+cls 4 thin,"brwn bear, polar bear",65-79.99,150-249.9,68.5-87.9,1500-1699
+cls 4 thck,cape buffalo,80-9999,250-999,88-9999,1700-9999

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Bcalc Ext Ballistics
+Comment=Open-source external ballistics calculator
+Exec=home/your_username/projects/bcalc/bcalcext/bin/python3 home/your_username/projects/bcalc/startprogram.py
+Path=home/your_username/projects/bcalc
+Icon=home/your_username/.local/share/icons/bcalcexticon.png
+Terminal=false
+Type=Application
+Categories=Education;Science;
+StartupNotify=true
+Keywords=ballistics;hunting;calculator;
