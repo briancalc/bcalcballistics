@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bcalcballistics"
+version = "1.0"
+description = "Open source firearm external ballistics calculator"
+readme = "README.md"
+requires-python = ">=3.8"
+authors = [
+    {name = "Brian Calc"}
+]
+license = "GPL-3.0-or-later"
+keywords = ["firearms", "ammunition", "ballistics", "calculator"]
+dependencies = [
+    "contourpy",
+    "cycler",
+    "fonttools",
+    "kiwisolver",
+    "matplotlib",
+    "mplcursors",
+    "numpy",
+    "packaging",
+    "pandas",
+    "pillow",
+    "pyparsing",
+    "python-dateutil",
+    "reportlab",
+    "six",
+    "ttkbootstrap",
+]
+
+[project.urls]
+Homepage = "https://github.com/briancalc/bcalcballistics"
+Repository = "https://github.com/briancalc/bcalcballistics"
+
+[project.scripts]
+bcalcballistics = "startprogram:main"
+
+[tool.setuptools]
+py-modules = ["startprogram", "angles", "atmosphere", "ballistics" , "bdc" , "constants", "dataentry", "dataformulas" ,"dataholder" , "dataholder2" , "dataoutputgui" , "drag" , "example" , "holdover" , "points" , "utils" , "windage"]
