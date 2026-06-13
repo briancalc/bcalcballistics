@@ -21,6 +21,7 @@
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
 
         /* Heading and subtitle */
@@ -73,6 +74,16 @@
             border-radius: 8px;
         }
 
+        .output-image {
+            float: right;
+            max-width: 470px;
+            margin-top: -270px;
+            margin-left: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: none;
+        }
+
         .button {
             display: inline-block;
             padding: 10px 20px;
@@ -108,19 +119,21 @@
 
         <h2>Features</h2>
         <ul>
-            <li>enter specific ammo & environmental factors for up to 3 rounds</li>
+            <li>enter specific ammunition and environmental factors for up to 3 rounds</li>
             <li>calculator returns output tables for trajectory metrics such as drop, wind, and velocity</li>
             <li>and draws 3 graphs comparing drop, velocity, and kinetic energy</li>
             <li>plus creates text files containing all calculated metrics for integer ranges 1 to 800 yards</li>
         </ul>
 
         <h2>Installation</h2>
-        <p>(1) via pip: <code>pip install bcalcballistics</code></p>
-        <p>(2) download from github</p>
+        <a href="https://github.com/briancalc/bcalcballistics/releases/tag/v1.0" class="button">Linux</a>
+        <a href="https://github.com/briancalc/bcalcballistics/releases/tag/v1.7.5" class="button">Windows</a>
 
         <h2>More Information</h2>
         <a href="https://github.com/briancalc/bcalcballistics#readme" class="button">Readme</a>
         <a href="https://github.com/briancalc/bcalcballistics" class="button">View on GitHub</a>
+
+        <img src="output results.png" alt="Calculator output example" class="output-image">
     </div>
 </body>
 </html>
