@@ -49,7 +49,7 @@ Long-range precision shooters. While the calculator returns good estimates for h
 
 ### 3. Install Python Packages
 
-- pip install -r piprequirements.txt
+- pip install -r requirements.txt
 
 ### 4. Download the Files
 
