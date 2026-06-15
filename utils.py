@@ -1,74 +1,27 @@
-#utils.py
+# utils.py
 import math
 
 
 def moaToMil(moa):
-    """ This function is used
+    """ Convert MOA to milliradians.
          Inputs: moa = angle in minutes
-         Outputs: none
-         returns: angle in milliradians
+         Returns: angle in milliradians
     """
     return moa * 0.290888208859
 
 
 def milToInch(mil, feet):
-    """ This function is used to convert mils to inches
-         Inputs:
-           mil =  angle in milliradians
-           feet = adjacent side in feet
-         Outputs: none
-         returns: adjacent side in inches
+    """ Convert milliradians to inches.
+         Inputs: mil = angle in milliradians, feet = adjacent side in feet
+         Returns: opposite side in inches
     """
     return (feet * 12) * (mil / 1000)
 
 
 def moaToInch(moa, feet):
-    """ This function is used to convert moa to inches
-         Inputs:
-           moa =  angle in minutes
-           feet = adjacent side in feet
-         Outputs: none
-         returns: adjacent side in inches
+    """ Convert MOA to inches using milliradians as intermediate step.
+         Inputs: moa = angle in minutes, feet = adjacent side in feet
+         Returns: opposite side in inches
     """
     mil = moaToMil(moa)
     return milToInch(mil, feet)
-
-
-def get_initial_upward_velocity(sight_height, time_of_flight):
-    """ This function calculates the initial upward velocity used in the
-    cant compensation calculation
-    Inputs:
-        sight_height =  distance of sight above bore height in inches
-        time_of_flight = total time of flight to the target
-
-    returns: initial upward velocity in feet per second (fps)
-
-    Formula:
-        vz0 = ( Sz / t ) - 1/2(gt)
-        vz0 = initial upward velocity
-        Sz = upward distance
-        t = time of flight
-        g = −32.137 feet per second squared
-      Note:  the minus indicating the acceleration is “down”
-      Source: https://www.empyrealsciences.com/Estimation%20of%20Shot%20Error%20due%20to%20Rifle%20Cant.pdf
-    """
-
-    return ((sight_height/12) / time_of_flight) + (0.5 * 32.137 * time_of_flight)
-
-
-def get_incline_compensation(path_inches, incline_angle):
-    import angles  # or import at top of file
-    return path_inches * math.cos(angles.deg_to_rad(incline_angle)) * -1
-
-    """
-      https://www.empyrealsciences.com/Estimation%20of%20Shot%20Error%20due%20to%20Rifle%20Cant.pdf
-    """
-def get_cant_compensation(time_of_flight, cant_angle, sight_height):
-    import angles  # or import at top of file
-    cant_angle_rad = angles.deg_to_rad(cant_angle)
-    initial_upward_velocity = get_initial_upward_velocity(sight_height, time_of_flight)
-    horizontal_error = (initial_upward_velocity *
-                        math.sin(cant_angle_rad)) * time_of_flight
-    vertical_error = -(initial_upward_velocity *
-                       (1 - math.cos(cant_angle_rad))) * time_of_flight
-    return horizontal_error, vertical_error

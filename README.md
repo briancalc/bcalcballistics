@@ -7,7 +7,7 @@
 3. Who isn't this for?
 4. Installation Guide
 5. User Guide
-6. Credits
+6. Credits & License
 
 ---
 
@@ -33,20 +33,6 @@ Hunters and hobbyists. The calculator provides ballistics data for typical field
 
 Long-range precision shooters. While the calculator returns good estimates for hunting and general recreation, it lacks the advanced modeling required for true long-range precision. Check out Hornady's excellent 4DOF calculator if you are new to or considering long-range precision shooting.
 
-## 4. Basic Linux Installation Guide
-
-### 1. Install System Dependencies
-
-- OpenMandriva: sudo dnf install python3 python3-pip tkinter
-- Vendefoul Wolf: sudo apt install python3 python3-pip python3-tk python3-venv
-
-### 2. Create and Activate Python Virtual Environment
-
-- mkdir -p ~/projects/bcalc
-- cd ~/projects/bcalc
-- python3 -m venv bcalcext
-- source bcalcext/bin/activate
-
 ## 4. Installation Guide
 
 ### 1. Linux
@@ -59,10 +45,6 @@ Long-range precision shooters. While the calculator returns good estimates for h
 
 - download "bcalcballistics.exe" from the https://github.com/briancalc/bcalcballistics/releases page
 - double click on the file to run
-
-### 3. Mac
-
-- in progress
 
 ## 5. User Guide
 
@@ -91,20 +73,20 @@ Long-range precision shooters. While the calculator returns good estimates for h
 
 **Step 6:** From the blue hamburger menu, select "Enter New Data" to return to the entry form or "Exit Program" to close.
 
-## 6. Credits
-
-I'm neither an external ballistics expert nor software developer. The goals for me were to learn more about bullet trajectory (we are getting there) and learn python (slow going). The calculator is offered for educational and entertainment purposes.
+## 6. Credits & License
 
 The Bcalc External Ballistics Calculator was created by Brian Calc.
 
 This calculator draws heavily from the GNU Ballistics Calculator created by Derek Yates, updated by William Grim, and ported to python by Brad Rise.
 
 In brief:
-
 - created GUI Data Entry Form
 - added MFG ammunition data
 - included ability to compare rounds
 - revised several ballistic formulas
+- removed extraneous files
 - created GUI Results Screen
 
-Plan is to continue to refine the calculator, polish the output, and cleanup the code. Suggestions for improvements are welcome.
+It is offered for educational and entertainment purposes.
+
+GNU General Public License (GPL) Version 3.

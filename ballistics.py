@@ -1,18 +1,14 @@
 #ballistics.py
+
 import windage
-import constants
+from config import GRAVITY, BALLISTICS_COMPUTATION_MAX_YARDS, OUTPUT_RANGES
 import angles
 import atmosphere
 import math
 import drag
 import utils
-from holdover import holdover
-from points import points
 import json
 
-# Define predefined ranges
-#OUTPUT_RANGES = [25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800]
-OUTPUT_RANGES = [100, 400, 800]
 
 def solve(drag_function, drag_coefficient, vi, sight_height, shooting_angle, zero_angle, wind_speed, wind_angle,
           altitude, barometer, temperature, relative_humidity):
@@ -44,26 +40,18 @@ def solve(drag_function, drag_coefficient, vi, sight_height, shooting_angle, zer
 
 
     gx = 0 #Gravity always acts vertically, not relative to bore angle
-    gy = constants.GRAVITY
+    gy = GRAVITY
 
     theta = angles.deg_to_rad(zero_angle)
     #corrected_drag_coeff is the corrected (by drag.py) bc coefficient.  this is called just drag_coefficient in the angles.py file
-    #DEBUG
-    with open("debug_output.txt", "a") as f:
-        f.write(f"DEBUG ballistics: zero_angle={zero_angle}, theta_radians={theta}, theta_degrees={angles.rad_to_deg(theta)}\n")
-    with open("debug_output.txt", "a") as f:
-        f.write(f"DEBUG ballistics: shooting_angle={shooting_angle},drag_coefficient={corrected_drag_coeff},zero_angle={zero_angle}\n")
-        f.write(f"DEBUG ballistics: theta_radians={theta}, theta_degrees={angles.rad_to_deg(theta)}\n")
 
     vx = vi * math.cos(theta)
     vy = vi * math.sin(theta)
-    #DEBUG
-    with open("debug_output.txt", "a") as f:
-        f.write(f"DEBUG: initial vx={vx}, initial vy={vy}, vi={vi}\n")
 
     y = -sight_height/12 #convert sight_height inches into feet for rest of calculations
     n = 0
-    hold_overs = points()
+
+    # Removed: hold_overs = points()
 
     # Prepare results list for 1..800 (index 0 -> range 1)
     MAX_YARDS = 800
@@ -104,8 +92,7 @@ def solve(drag_function, drag_coefficient, vi, sight_height, shooting_angle, zer
                 # Vertical correction relative to sight line
                 moa_correction = -angles.rad_to_moa(math.atan(drop_relative_to_sight / x))
                 path_inches = drop_relative_to_sight * 12
-                impact_in = utils.moaToInch(moa_correction, x)
-                #wind_drift_inches = windage.windage(cwind, vi, x, t) #old code - trying something with next 2 lines
+                 #wind_drift_inches = windage.windage(cwind, vi, x, t) #old code - trying something with next 2 lines
                 vx_windcomponent = vi * math.cos(math.radians(zero_angle))
                 wind_drift_inches = windage.windage(cwind, vx_windcomponent, x, t)
 
@@ -123,9 +110,7 @@ def solve(drag_function, drag_coefficient, vi, sight_height, shooting_angle, zer
                     print("velocity (ft/s) {}".format(round(v, 0)))
                     print("TOF seconds {}".format(round(seconds, 3)))
 
-                hold_overs.add_point(
-                    holdover(range_yards, moa_correction, impact_in, path_inches, seconds,
-                            wind_moa_correction, wind_drift_inches))
+                # Removed: hold_overs.add_point(holdover(...)) block
 
                 # If in 1..800, store a dict matching printed fields
                 if 1 <= range_yards <= MAX_YARDS:
@@ -145,7 +130,7 @@ def solve(drag_function, drag_coefficient, vi, sight_height, shooting_angle, zer
         x = x + dt * (vx+vx1)/2
         y = y + dt * (vy+vy1)/2
 
-        if (math.fabs(vy) > math.fabs(3*vx) or n >= constants.BALLISTICS_COMPUTATION_MAX_YARDS):
+        if (math.fabs(vy) > math.fabs(3*vx) or n >= BALLISTICS_COMPUTATION_MAX_YARDS):
             break
 
         t = t + dt
@@ -158,4 +143,4 @@ def solve(drag_function, drag_coefficient, vi, sight_height, shooting_angle, zer
             f.write(json.dumps(entry) if entry is not None else "null")
             f.write("\n")
 
-    return hold_overs
+    return None

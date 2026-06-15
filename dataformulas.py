@@ -9,7 +9,6 @@ from __future__ import annotations
 import json
 import os
 import math
-import time
 from dataclasses import dataclass, asdict
 from typing import List, Optional
 
@@ -98,13 +97,6 @@ def write_atomic(path: str, text: str) -> None:
     os.replace(tmp, path)
 
 
-def append_log(log_path: str, lines: List[str]) -> None:
-    tmp = log_path + ".tmp"
-    with open(tmp, "w", encoding="utf-8") as f:
-        f.write("\n".join(lines) + "\n")
-    os.replace(tmp, log_path)
-
-
 def find_ballistics_entry(ballistics: List[dict], run_number: int) -> Optional[dict]:
     for entry in ballistics:
         rn = entry.get("run_number")
@@ -123,23 +115,19 @@ def safe_float(val) -> Optional[float]:
 def process_trac_run(n: int, ballistics: List[dict]) -> int:
     trac_name = f"trac_run{n}.json"
     out_name = f"term_run{n}.json"
-    log_name = f"term_run{n}_errors.log"
-    errors: List[str] = []
     processed_lines = 0
     written_lines = 0
 
     entry = find_ballistics_entry(ballistics, n)
     if entry is None:
-        errors.append(f"[FATAL] No entry in ballistics_runs.json with run_number == {n}")
-        append_log(log_name, header_log(n, errors))
+        print(f"[FATAL] No entry in ballistics_runs.json with run_number == {n}")
         return 1
 
     # Validate required constant fields for this run
     required_fields = ["weight", "caliber", "crs_sec_area", "sec_den"]
     missing = [f for f in required_fields if safe_float(entry.get(f)) is None]
     if missing:
-        errors.append(f"[FATAL] Missing or invalid required fields for run {n}: {missing}")
-        append_log(log_name, header_log(n, errors))
+        print(f"[FATAL] Missing or invalid required fields for run {n}: {missing}")
         return 1
 
     # prepare constant values
@@ -165,7 +153,7 @@ def process_trac_run(n: int, ballistics: List[dict]) -> int:
                     # Expect velocity_ft_s present and numeric
                     vel = safe_float(obj.get("velocity_ft_s"))
                     if vel is None:
-                        errors.append(f"Line {idx}: missing/invalid velocity_ft_s -> writing null")
+                        print(f"[ERROR] Run {n}, line {idx}: missing/invalid velocity_ft_s -> writing null")
                         out_lines.append("null")
                         written_lines += 1
                         continue
@@ -185,52 +173,30 @@ def process_trac_run(n: int, ballistics: List[dict]) -> int:
                     out_lines.append(json.dumps(obj_out, ensure_ascii=False))
                     written_lines += 1
                 except json.JSONDecodeError as e:
-                    errors.append(f"Line {idx}: JSON parse error: {e.msg} -> writing null")
+                    print(f"[ERROR] Run {n}, line {idx}: JSON parse error: {e.msg} -> writing null")
                     out_lines.append("null")
                     written_lines += 1
     except Exception as e:
-        errors.append(f"[FATAL] Error reading {trac_name}: {e}")
-        append_log(log_name, header_log(n, errors))
+        print(f"[FATAL] Error reading {trac_name}: {e}")
         return 1
 
-    # write output NDJSON atomically and write log
+    # write output NDJSON atomically
     try:
         write_atomic(out_name, "\n".join(out_lines) + "\n")
     except Exception as e:
-        errors.append(f"[FATAL] Error writing {out_name}: {e}")
-        append_log(log_name, header_log(n, errors))
+        print(f"[FATAL] Error writing {out_name}: {e}")
         return 1
 
-    #prepare final log content
-    summary = [
-        f"Run {n} processed: lines_read={processed_lines}, lines_written={written_lines}",
-        f"Output: {out_name}",
-    ]
-    log_lines = header_log(n, errors) + summary
-    append_log(log_name, log_lines)
+    # summary to terminal
+    print(f"Run {n}: processed {processed_lines} lines, wrote {written_lines} lines -> {out_name}")
     return 0
-
-
-def header_log(run_number: int, errors: List[str]) -> List[str]:
-    header = [
-        f"term_run{run_number} errors",
-        f"timestamp: {time.strftime('%Y-%m-%d %H:%M:%S')}",
-        "-" * 40,
-    ]
-    if errors:
-        header += ["Errors:"] + errors + ["-" * 40]
-    else:
-        header += ["No errors detected", "-" * 40]
-    return header
 
 
 def main() -> int:
     try:
         ballistics = load_ballistics_runs("ballistics_runs.json")
     except Exception as e:
-        msg = f"[FATAL] Unable to read ballistics_runs.json: {e}"
-        print(msg)
-        write_atomic("term_run_all_errors.log", msg + "\n")
+        print(f"[FATAL] Unable to read ballistics_runs.json: {e}")
         return 2
 
     # determine declared runs from ballistics_runs.json
@@ -244,14 +210,12 @@ def main() -> int:
     for n in (1, 2, 3):
         if n not in declared_runs:
             stale_out = f"term_run{n}.json"
-            stale_log = f"term_run{n}_errors.log"
-            for p in (stale_out, stale_log):
-                try:
-                    if os.path.isfile(p):
-                        os.remove(p)
-                        print(f"[CLEANUP] removed stale file: {p}")
-                except Exception as e:
-                    print(f"[WARN] failed to remove {p}: {e}")
+            try:
+                if os.path.isfile(stale_out):
+                    os.remove(stale_out)
+                    print(f"[CLEANUP] removed stale file: {stale_out}")
+            except Exception as e:
+                print(f"[WARN] failed to remove {stale_out}: {e}")
 
     found = find_trac_files()
     if not found:
@@ -262,9 +226,6 @@ def main() -> int:
     for n in found:
         if n not in declared_runs:
             #skip stale trac files that don't match current ballistics_runs.json
-            log_name = f"term_run{n}_errors.log"
-            msg_lines = header_log(n, [f"[SKIP] trac_run{n}.json exists but no matching run_number in ballistics_runs.json; skipping."])
-            append_log(log_name, msg_lines)
             print(f"[SKIP] trac_run{n}.json found but no matching run_number in ballistics_runs.json; skipped.")
             continue
 

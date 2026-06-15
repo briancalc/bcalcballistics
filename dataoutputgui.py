@@ -16,100 +16,48 @@ import math
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-#consistent wtih dataentry.py
-COLOR_BG_FRAME = "#FFFFFF"
-COLOR_LABEL = "#333333"
-COLOR_WHITE = "#FFFFFF"
-COLOR_GRAY = "#D3D3D3"
-COLOR_ERROR_BG = "#FFCDD2"
-COLOR_ERROR_TEXT = "#D32F2F"
-COLOR_UNIT = "#999999"
-COLOR_HEADER_BG = "#F5F5F5"
-
-FONT_FAMILY = "Roboto"
-LABEL_FONT_SIZE = 12
-UNIT_FONT_SIZE = 10
-TITLE_FONT_SIZE = 16
-HEADER_FONT_SIZE = 13
-SMALL_FONT_SIZE = 10
+from config import (
+    COLORS, FONTS, RANGE_OPTIONS, TABLE_METRICS,
+    INPUT_PARAMS, ROUND_COLORS, ROUND_LABELS, FILES
+)
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-MAX_RETRIES = 3
-RETRY_DELAY = 0.2
-
-RANGE_OPTIONS = [25, 50, 75, 100, 150, 200, 250, 300, 350, 400,
-                 450, 500, 550, 600, 650, 700, 750, 800]
-
-TABLE_METRICS = [
-    ("drop_in", "Drop (in)", 2),
-    ("wind_drift_in", "Wind Drift (in)", 2),
-    ("moa_correction", "MOA Correction", 2),
-    ("wind_moa_correction", "Wind MOA", 2),
-    ("velocity_ft_s", "Velocity (ft/s)", 0),
-    ("tof_seconds", "TOF (s)", 2),
-    ("ke", "Kinetic Energy", 0),
-    ("momentum", "Momentum", 2),
-    ("taylor_knockout", "Taylor KO", 0),
-    ("thorniley", "Thorniley", 0),
-    ("hawks", "Hawks", 0),
-    ("hornady_hits", "Hornady HITS", 0),
-]
-
-INPUT_PARAMS = [
-    ("caliber", "Caliber", 3),
-    ("drag_function", "Drag Function", None),
-    ("bc", "Ballistic Coefficient", 3),
-    ("weight", "Bullet Weight", 1),
-    ("v", "Muzzle Velocity", 0),
-    ("sight_height", "Sight Height", 2),
-    ("twist", "Barrel Twist", 2),
-    ("shooting_angle", "Shooting Angle", 0),
-    ("zero_range", "Zero Range", 0),
-    ("windspeed", "Wind Speed", 0),
-    ("windangle", "Wind Angle", 0),
-    ("altitude", "Altitude", 0),
-    ("barometer", "Pressure", 2),
-    ("temperature", "Temperature", 0),
-    ("relative_humidity", "Humidity", 1),
-]
-
-ROUND_COLORS = ['red', 'blue', 'green']
-ROUND_LABELS = ['Round 1', 'Round 2', 'Round 3']
-
+MAX_RETRIES = 2
+RETRY_DELAY = 0.02
 
 def setup_styles(style):
-    style.configure("TFrame", background=COLOR_BG_FRAME)
-    style.configure("TLabelframe", background=COLOR_BG_FRAME)
-    style.configure("TLabelframe.Label", foreground=COLOR_LABEL,
-                    background=COLOR_BG_FRAME,
-                    font=(FONT_FAMILY, HEADER_FONT_SIZE, "bold"))
-    style.configure("CustomLabel.TLabel", foreground=COLOR_LABEL,
-                    background=COLOR_BG_FRAME,
-                    font=(FONT_FAMILY, LABEL_FONT_SIZE))
-    style.configure("Unit.TLabel", foreground=COLOR_UNIT,
-                    background=COLOR_BG_FRAME,
-                    font=(FONT_FAMILY, UNIT_FONT_SIZE))
-    style.configure("Title.TLabel", foreground=COLOR_ERROR_TEXT,
-                    background=COLOR_BG_FRAME,
-                    font=(FONT_FAMILY, TITLE_FONT_SIZE, "bold"))
-    style.configure("Section.TLabel", foreground=COLOR_LABEL,
-                    background=COLOR_BG_FRAME,
-                    font=(FONT_FAMILY, HEADER_FONT_SIZE, "bold"))
-    style.configure("Header.TLabel", foreground=COLOR_LABEL,
-                    background=COLOR_HEADER_BG,
-                    font=(FONT_FAMILY, LABEL_FONT_SIZE, "bold"))
-    style.configure("Small.TLabel", foreground=COLOR_LABEL,
-                    background=COLOR_BG_FRAME,
-                    font=(FONT_FAMILY, SMALL_FONT_SIZE))
-    style.configure("Data.TLabel", foreground=COLOR_LABEL,
-                    background=COLOR_WHITE,
-                    font=(FONT_FAMILY, SMALL_FONT_SIZE))
-    style.configure("DataHeader.TLabel", foreground=COLOR_LABEL,
-                    background=COLOR_GRAY,
-                    font=(FONT_FAMILY, SMALL_FONT_SIZE, "bold"))
-    style.configure("TButton", font=(FONT_FAMILY, LABEL_FONT_SIZE))
-    style.configure("TEntry", font=(FONT_FAMILY, LABEL_FONT_SIZE))
-    style.configure("TCombobox", font=(FONT_FAMILY, LABEL_FONT_SIZE))
+    style.configure("TFrame", background=COLORS['bg_frame'])
+    style.configure("TLabelframe", background=COLORS['bg_frame'])
+    style.configure("TLabelframe.Label", foreground=COLORS['label'],
+                    background=COLORS['bg_frame'],
+                    font=(FONTS['family'], FONTS['header_size'], "bold"))
+    style.configure("CustomLabel.TLabel", foreground=COLORS['label'],
+                    background=COLORS['bg_frame'],
+                    font=(FONTS['family'], FONTS['label_size']))
+    style.configure("Unit.TLabel", foreground=COLORS['unit'],
+                    background=COLORS['bg_frame'],
+                    font=(FONTS['family'], FONTS['unit_size']))
+    style.configure("Title.TLabel", foreground=COLORS['error_text'],
+                    background=COLORS['bg_frame'],
+                    font=(FONTS['family'], FONTS['title_size'], "bold"))
+    style.configure("Section.TLabel", foreground=COLORS['label'],
+                    background=COLORS['bg_frame'],
+                    font=(FONTS['family'], FONTS['header_size'], "bold"))
+    style.configure("Header.TLabel", foreground=COLORS['label'],
+                    background=COLORS['header_bg'],
+                    font=(FONTS['family'], FONTS['label_size'], "bold"))
+    style.configure("Small.TLabel", foreground=COLORS['label'],
+                    background=COLORS['bg_frame'],
+                    font=(FONTS['family'], FONTS['small_size']))
+    style.configure("Data.TLabel", foreground=COLORS['label'],
+                    background=COLORS['white'],
+                    font=(FONTS['family'], FONTS['small_size']))
+    style.configure("DataHeader.TLabel", foreground=COLORS['label'],
+                    background=COLORS['gray'],
+                    font=(FONTS['family'], FONTS['small_size'], "bold"))
+    style.configure("TButton", font=(FONTS['family'], FONTS['label_size']))
+    style.configure("TEntry", font=(FONTS['family'], FONTS['label_size']))
+    style.configure("TCombobox", font=(FONTS['family'], FONTS['label_size']))
 
 
 def load_json_file(filepath, retries=MAX_RETRIES, delay=RETRY_DELAY):
@@ -253,7 +201,7 @@ class BallisticsGUI:
         self.root = root
         self.root.title("Bcalc External Ballistics")
         self.root.geometry("1400x820")
-        self.root.option_add("*Font", (FONT_FAMILY, 10))
+        self.root.option_add("*Font", (FONTS['family'], 10))
 
         self.ballistics_data = []
         self.term_data = []
@@ -392,7 +340,7 @@ class BallisticsGUI:
         inner.rowconfigure(0, weight=1)
 
         # Create Canvas and Vertical Scrollbar
-        self.table_canvas = tk.Canvas(inner, bg=COLOR_WHITE, highlightthickness=0)
+        self.table_canvas = tk.Canvas(inner, bg=COLORS['white'], highlightthickness=0)
         self.table_scrollbar = ttk.Scrollbar(inner, orient="vertical",
                                              command=self.table_canvas.yview)
 
@@ -666,11 +614,11 @@ class BallisticsGUI:
 
         self.app_menu = tk.Menu(
             self.root, tearoff=0,
-            background=COLOR_BG_FRAME,
-            foreground=COLOR_LABEL,
-            font=(FONT_FAMILY, LABEL_FONT_SIZE),
+            background=COLORS['bg_frame'],
+            foreground=COLORS['label'],
+            font=(FONTS['family'], FONTS['label_size']),
             borderwidth=0, relief="flat",
-            activebackground=COLOR_GRAY)
+            activebackground=COLORS['gray'])
 
         def close_and_show(title, msg):
             try:
@@ -733,18 +681,18 @@ class BallisticsGUI:
             dialog.title(title)
             dialog.geometry("500x400")
             dialog.resizable(False, False)
-            dialog.configure(bg=COLOR_BG_FRAME)
+            dialog.configure(bg=COLORS['bg_frame'])
 
             frame = ttk.Frame(dialog)
             frame.pack(fill=tk.BOTH, expand=True, padx=15, pady=15)
 
             text_widget = tk.Text(
                 frame, wrap=tk.WORD,
-                font=(FONT_FAMILY, 12),
-                foreground=COLOR_LABEL,
-                bg=COLOR_BG_FRAME,
-                selectbackground=COLOR_GRAY,
-                selectforeground=COLOR_LABEL,
+                font=(FONTS['family'], 12),
+                foreground=COLORS['label'],
+                bg=COLORS['bg_frame'],
+                selectbackground=COLORS['gray'],
+                selectforeground=COLORS['label'],
                 relief="flat", borderwidth=0,
                 highlightthickness=0,
                 padx=5, pady=5)

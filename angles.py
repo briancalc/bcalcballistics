@@ -5,7 +5,7 @@
 #Angle required so the bullet intersects the sight line at 100 yd given the specific angle
 import math
 import drag
-import constants
+from config import GRAVITY
 
 #Converts degrees to minutes of angle
 def deg_to_moa(deg):
@@ -33,9 +33,6 @@ def rad_to_moa(rad):
 
 #drag_coefficient is already the corrected drag cofficient
 def zero_angle(drag_function, drag_coefficient, vi, sight_height, zero_range, y_intercept, shooting_angle):
-
-    with open("debug_output.txt", "a") as f:
-        f.write(f"DEBUG ANGLES.PY zero_angle() called: drag_function={drag_function},drag_coefficient={drag_coefficient},shooting_angle={shooting_angle}, zero_range={zero_range}\n")
     """
     vi - initial velocity of the projectile, in feet/s
     sight_height - height of the sighting system above the bore centerline, in inches.
@@ -69,7 +66,7 @@ def zero_angle(drag_function, drag_coefficient, vi, sight_height, zero_range, y_
 
     # Gravitational acceleration
     Gx = 0
-    Gy = constants.GRAVITY
+    Gy = GRAVITY
 
     # The actual angle of the bore.
     angle = 0
@@ -81,20 +78,8 @@ def zero_angle(drag_function, drag_coefficient, vi, sight_height, zero_range, y_
     if shooting_angle != 0:
         slope_height = (zero_range * 3) * math.tan(math.radians(shooting_angle))
         target_y = slope_height # Fixed: Removed - sight_height/12 to match scope-relative coordinates
-        with open("debug_output.txt", "a") as f:
-            f.write(f"DEBUG ANGLES.PY: slope_height={slope_height}, target_y={target_y}\n")
     else:
         target_y = y_intercept
-        with open("debug_output.txt", "a") as f:
-            f.write(f"DEBUG: ANGLES.PY Using level ground, target_y={target_y}\n")
-
-
-
-    #DEBUG: Show what we're searching for
-    with open("debug_output.txt", "a") as f:
-        f.write(f"DEBUG ANGLES.PY ZERO_ANGLE: Target is target_y={target_y}, y_intercept={y_intercept}\n")
-
-
 
     # The change in the bore angle used to iterate in on the correct zero angle.
     # Start with a very coarse angular change, to quickly solve even large launch angle problems.
@@ -108,9 +93,6 @@ def zero_angle(drag_function, drag_coefficient, vi, sight_height, zero_range, y_
 
     while quit == 0:
         angle = da + angle
-        #DEBUG
-        with open("debug_output.txt", "a") as f:
-            f.write(f"\n--- angles.py Testing angle={rad_to_deg(angle):.4f}° (da={rad_to_deg(da):.6f}°) ---\n")
 
 
         vy = vi * math.sin(angle)
@@ -118,7 +100,7 @@ def zero_angle(drag_function, drag_coefficient, vi, sight_height, zero_range, y_
 
         #gravity acts only on the vertical component vy
         Gx = 0
-        Gy = constants.GRAVITY
+        Gy = GRAVITY
         t = 0
         x = 0
         y = -sight_height/12
@@ -182,9 +164,6 @@ def zero_angle(drag_function, drag_coefficient, vi, sight_height, zero_range, y_
             # Break early to save CPU time if we won't find a solution.
             #if vy < 0 and y < y_intercept: tyring something new vy <-100:
             if vy < -100:
-                #DEBUG
-                with open("debug_output.txt", "a") as f:
-                    f.write(f"  angles.py EARLY BREAK at x={x:.2f}ft, y={y:.2f}ft (vy={vy:.2f}, y_intercept={y_intercept})\n")
                 break
 
             if vy > 3*vx:
@@ -197,17 +176,6 @@ def zero_angle(drag_function, drag_coefficient, vi, sight_height, zero_range, y_
             da = -da/2
         if y < target_y and da < 0:
             da = -da/2
-
-        #DEBUG
-        with open("debug_output.txt", "a") as f:
-            f.write(f"  angles.py Final: x={x:.2f}ft ({x/3:.2f}yd), y={y:.2f}ft, target_y={target_y:.2f}ft\n")
-            f.write(f"  angles.py Condition: y({y:.2f}) vs target_y({target_y:.2f})? ")
-            if y > target_y:
-                f.write(f"y > target (TOO HIGH)\n")
-            elif y < target_y:
-                f.write(f"y < target (TOO LOW)\n")
-            else:
-                f.write(f"y == target (MATCH)\n")
 
 
         # If our accuracy is sufficient, we can stop approximating.

@@ -1,5 +1,5 @@
 #dataentry.py
-#user input screen for bcalc
+#user input screen for bcalc external ballistics calculator
 
 import tkinter as tk
 import ttkbootstrap as ttk
@@ -16,51 +16,22 @@ except ImportError:
 
 import dataholder2
 
-#design
-COLOR_BG_FRAME = "#FFFFFF"
-COLOR_LABEL = "#333333"
-COLOR_WHITE = "#FFFFFF"
-COLOR_GRAY = "#D3D3D3"
-COLOR_ERROR_BG = "#FFCDD2"
-COLOR_ERROR_TEXT = "#D32F2F"
-COLOR_UNIT = "#999999"
-
-FONT_FAMILY = "Roboto"
-LABEL_FONT_SIZE = 12
-UNIT_FONT_SIZE = 10
-TITLE_FONT_SIZE = 16
-
-#validation rules
-VALIDATION_RULES: Dict[str, Tuple[float, float]] = {
-    "bc": (0.1, 2.0),
-    "weight": (1, 600),
-    "v": (100, 5000),
-    "twist": (1, 10),
-    "sight_height": (0, 5),
-    "shooting_angle": (-35, 35),
-    "zero_range": (0, 800),
-    "windspeed": (0, 50),
-    "windangle": (0, 359),
-    "altitude": (-1000, 10000),
-    "barometer": (20, 35),
-    "temperature": (-30, 130),
-    "relative_humidity": (0, 100),
-}
+from config import COLORS, FONTS, INPUT_PARAMS, VALIDATION_RULES
 
 
 def setup_styles(style):
     """Define all custom styles."""
-    style.configure("TEntry", font=(FONT_FAMILY, LABEL_FONT_SIZE))
-    style.configure("TCombobox", font=(FONT_FAMILY, LABEL_FONT_SIZE))
-    style.configure("CustomFrame.TFrame", background=COLOR_BG_FRAME)
-    style.configure("CustomLabel.TLabel", foreground=COLOR_LABEL, background=COLOR_BG_FRAME, font=(FONT_FAMILY, LABEL_FONT_SIZE))
-    style.configure("Unit.TLabel", foreground=COLOR_UNIT, background=COLOR_BG_FRAME, font=(FONT_FAMILY, UNIT_FONT_SIZE))
-    style.configure("Title.TLabel", foreground=COLOR_ERROR_TEXT, background=COLOR_BG_FRAME, font=(FONT_FAMILY, TITLE_FONT_SIZE, "bold"))
-    style.configure("TButton", font=(FONT_FAMILY, LABEL_FONT_SIZE))
-    style.configure("White.TCombobox", fieldbackground=COLOR_WHITE, foreground="black", font=(FONT_FAMILY, LABEL_FONT_SIZE))
-    style.configure("White.TEntry", fieldbackground=COLOR_WHITE, foreground="black", font=(FONT_FAMILY, LABEL_FONT_SIZE))
-    style.configure("Gray.TEntry", fieldbackground=COLOR_GRAY, foreground="black", font=(FONT_FAMILY, LABEL_FONT_SIZE))
-    style.configure("Error.TEntry", fieldbackground=COLOR_ERROR_BG, foreground="black", font=(FONT_FAMILY, UNIT_FONT_SIZE))
+    style.configure("TEntry", font=(FONTS['family'], FONTS['label_size']))
+    style.configure("TCombobox", font=(FONTS['family'], FONTS['label_size']))
+    style.configure("CustomFrame.TFrame", background=COLORS['bg_frame'])
+    style.configure("CustomLabel.TLabel", foreground=COLORS['label'], background=COLORS['bg_frame'], font=(FONTS['family'], FONTS['label_size']))
+    style.configure("Unit.TLabel", foreground=COLORS['unit'], background=COLORS['bg_frame'], font=(FONTS['family'], FONTS['unit_size']))
+    style.configure("Title.TLabel", foreground=COLORS['error_text'], background=COLORS['bg_frame'], font=(FONTS['family'], FONTS['title_size'], "bold"))
+    style.configure("TButton", font=(FONTS['family'], FONTS['label_size']))
+    style.configure("White.TCombobox", fieldbackground=COLORS['white'], foreground="black", font=(FONTS['family'], FONTS['label_size']))
+    style.configure("White.TEntry", fieldbackground=COLORS['white'], foreground="black", font=(FONTS['family'], FONTS['label_size']))
+    style.configure("Gray.TEntry", fieldbackground=COLORS['gray'], foreground="black", font=(FONTS['family'], FONTS['label_size']))
+    style.configure("Error.TEntry", fieldbackground=COLORS['error_bg'], foreground="black", font=(FONTS['family'], FONTS['unit_size']))
 
 
 def create_row(parent, label_text, row, style_name="White.TEntry", default_val="", unit=""):
@@ -72,7 +43,7 @@ def create_row(parent, label_text, row, style_name="White.TEntry", default_val="
     row_frame.grid(row=row, column=1, sticky="w", padx=5, pady=2)
 
     entry = ttk.Entry(row_frame, width=12, style=style_name, justify='center')
-    entry.config(font=(FONT_FAMILY, LABEL_FONT_SIZE))
+    entry.config(font=(FONTS['family'], FONTS['label_size']))
     entry.pack(side="left")
     entry.insert(0, default_val)
 
@@ -80,7 +51,7 @@ def create_row(parent, label_text, row, style_name="White.TEntry", default_val="
         unit_lbl = ttk.Label(row_frame, text=unit, style="Unit.TLabel")
         unit_lbl.pack(side="left", padx=(5, 0))
 
-    error_lbl = ttk.Label(row_frame, text="", foreground=COLOR_ERROR_TEXT, background=COLOR_BG_FRAME, font=(FONT_FAMILY, UNIT_FONT_SIZE))
+    error_lbl = ttk.Label(row_frame, text="", foreground=COLORS['error_text'], background=COLORS['bg_frame'], font=(FONTS['family'], FONTS['unit_size']))
     error_lbl.pack(side="left", padx=(5, 0))
 
     return entry, error_lbl
@@ -258,7 +229,7 @@ def main():
         justify='center',
         style="White.TCombobox",
     )
-    combo_cartridge.config(font=(FONT_FAMILY, LABEL_FONT_SIZE))
+    combo_cartridge.config(font=(FONTS['family'], FONTS['label_size']))
     combo_cartridge.grid(row=1, column=1, columnspan=2, sticky="ew", padx=5, pady=2)
     if cartridge_data:
         combo_cartridge.current(0)
@@ -303,7 +274,7 @@ def main():
         justify='center',
         style="White.TCombobox",
     )
-    combo_drag.config(font=(FONT_FAMILY, LABEL_FONT_SIZE))
+    combo_drag.config(font=(FONTS['family'], FONTS['label_size']))
     combo_drag.grid(row=2, column=1, sticky="w", padx=5, pady=2)
     combo_drag.current(0)
 
@@ -436,12 +407,12 @@ def main():
         # Create the menu if it doesn't exist yet
         if not hasattr(root, '_app_menu'):
             root._app_menu = tk.Menu(root, tearoff=0,
-                                     background=COLOR_BG_FRAME,
-                                     foreground=COLOR_LABEL,
-                                     font=(FONT_FAMILY, LABEL_FONT_SIZE),
+                                     background=COLORS['bg_frame'],
+                                     foreground=COLORS['label'],
+                                     font=(FONTS['family'], FONTS['label_size']),
                                      borderwidth=0,
                                      relief="flat",
-                                     activebackground=COLOR_GRAY)
+                                     activebackground=COLORS['gray'])
 
             # Define the helper function INSIDE the block so it has access to root._app_menu
             def close_and_show(title, msg):
@@ -517,7 +488,7 @@ def main():
             dialog.title(title)
             dialog.geometry("500x400")
             dialog.resizable(False, False)
-            dialog.configure(bg=COLOR_BG_FRAME)
+            dialog.configure(bg=COLORS['bg_frame'])
 
             # 1. Main Frame
             main_frame = ttk.Frame(dialog, style="CustomFrame.TFrame")
@@ -527,11 +498,11 @@ def main():
             text_widget = tk.Text(
                 main_frame,
                 wrap=tk.WORD,
-                font=(FONT_FAMILY, 12),
-                foreground=COLOR_LABEL,
-                bg=COLOR_BG_FRAME,
-                selectbackground=COLOR_GRAY,
-                selectforeground=COLOR_LABEL,
+                font=(FONTS['family'], 12),
+                foreground=COLORS['label'],
+                bg=COLORS['bg_frame'],
+                selectbackground=COLORS['gray'],
+                selectforeground=COLORS['label'],
                 relief="flat",
                 borderwidth=0,
                 highlightthickness=0,
@@ -627,7 +598,7 @@ def main():
     ttk.Button(btn_frame, text="Run Ballistics", bootstyle="primary", command=on_execute).pack(side=LEFT, padx=5)
 
     # Status Label (Row row+1, Col 0-1, Left aligned)
-    status_label = ttk.Label(main_frame, text="0 of 3 rounds data stored", foreground="green", font=(FONT_FAMILY, 12))
+    status_label = ttk.Label(main_frame, text="0 of 3 rounds data stored", foreground="green", font=(FONTS['family'], 12))
     status_label.grid(row=row+1, column=0, columnspan=2, pady=(0, 10), sticky="w")
 
     # Hamburger Menu Button (Row row+1, Col 2, Right aligned)

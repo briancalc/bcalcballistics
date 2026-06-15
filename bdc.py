@@ -1,4 +1,5 @@
 # bdc.py ballistic drop compensation for given range
+
 import atmosphere
 import angles
 import ballistics
@@ -33,7 +34,7 @@ def get_run_data(run_index: int = 0) -> dict:
     return run
 
 
-def calcBDC(range_yards: int, run_index: int = 0) -> list:
+def calcBDC(range_yards: int, run_index: int = 0) -> None:
 
     try:
         run_data = get_run_data(run_index)
@@ -73,7 +74,6 @@ def calcBDC(range_yards: int, run_index: int = 0) -> list:
         f"Zero Range={run_data.get('zero_range', 'Unknown')}"
     )
 
-    #print(f"  Corrected BC: {bc_corrected}") #for debugging
 
     zeroangle = angles.zero_angle(
         drag_function, bc_corrected, v,
@@ -81,19 +81,13 @@ def calcBDC(range_yards: int, run_index: int = 0) -> list:
         shooting_angle
     )
 
-    with open("debug_output.txt", "a") as f:
-        f.write(
-            f"\nbdc.py FINAL: shooting_angle={shooting_angle}, "
-            f"calculated zero_angle={zeroangle}\n"
-        )
-
-    hold_overs = ballistics.solve(
+    # Call solve; it writes results to trac_flat.json internally
+    ballistics.solve(
         drag_function, bc_corrected, v, sight_height, shooting_angle,
         zeroangle, windspeed, windangle,
         altitude, barometer, temperature,
         relative_humidity
     )
-
 
     # file routing
     source_file = "trac_flat.json"
@@ -107,7 +101,7 @@ def calcBDC(range_yards: int, run_index: int = 0) -> list:
     else:
         print(f"Warning: {source_file} not found for run {run_index + 1}")
 
-    return hold_overs
+    return None
 
 
 def calcBDC_all_runs(range_yards: int) -> list:
