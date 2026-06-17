@@ -128,6 +128,24 @@
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
 
+         .other-apps-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .other-apps-buttons .button {
+            color: #ba7800;
+            border-color: #ba7800;
+        }
+
+        .other-apps-buttons .button:hover {
+            background-color: #ba7800;
+            color: white;
+        }
 
         /* Main Container */
         .container {
@@ -692,5 +710,14 @@
     });
     </script>
 
+     <!-- Other Apps Section -->
+    <div class="container">
+        <h2>Other Applications</h2>
+        <div class="other-apps-buttons">
+            <a href="https://briancalc.github.io/bcalcrecoil/" class="button">Recoil Calculator</a>
+            <a href="https://briancalc.github.io/bcalctracker/" class="button">Firearm Management</a>
+        </div>
+    </div>
+
 </body>
-</html>
+</html>>
